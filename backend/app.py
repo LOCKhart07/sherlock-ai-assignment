@@ -101,7 +101,7 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
 
 
-app.include_router(auth.router, prefix="/auth", tags=["auth"])
+app.include_router(auth.router, tags=["auth"])
 
 
 if __name__ == "__main__":

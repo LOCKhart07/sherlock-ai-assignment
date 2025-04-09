@@ -19,6 +19,7 @@ async def verify_google_token(token: str, db: Session) -> Optional[User]:
         userid = idinfo["sub"]
         email = idinfo["email"]
         name = idinfo.get("name", "")
+        picture = idinfo.get("picture", "")
 
         # Check if user exists
         user = db.query(User).filter(User.email == email).first()
@@ -29,8 +30,7 @@ async def verify_google_token(token: str, db: Session) -> Optional[User]:
                 email=email,
                 username=email.split("@")[0],  # Use email prefix as username
                 full_name=name,
-                is_active=True,
-                is_superuser=False,
+                photo_url=picture,
             )
             db.add(user)
             db.commit()
@@ -38,7 +38,8 @@ async def verify_google_token(token: str, db: Session) -> Optional[User]:
 
         return user
 
-    except ValueError:
+    except ValueError as e:
+        print("Invalid authentication credentials" + str(e))
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid authentication credentials",
