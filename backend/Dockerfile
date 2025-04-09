@@ -12,11 +12,11 @@ RUN chown -R sherlock:sherlock /code
 USER sherlock
 
 # Copy and install dependencies
-COPY --chown=sherlock:sherlock ./backend/requirements.txt /code/requirements.txt
+COPY --chown=sherlock:sherlock ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt --user --no-warn-script-location # Install in user directory
 
 # Copy application code
-COPY --chown=sherlock:sherlock ./backend/app /code/app
+COPY --chown=sherlock:sherlock ./ /code/app
 
 # Ensure user-installed packages are in PATH
 ENV PATH="/home/sherlock/.local/bin:${PATH}"
