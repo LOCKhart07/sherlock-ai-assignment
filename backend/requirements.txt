@@ -11,3 +11,6 @@ pytest
 httpx
 PyJWT
 python-multipart
+python-jose[cryptography]
+google-auth
+google-auth-oauthlib

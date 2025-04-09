@@ -100,6 +100,12 @@ async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
 
 
+from fastapi import FastAPI
+from api.v1.endpoints import auth
+
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
+
+
 if __name__ == "__main__":
     import uvicorn
 

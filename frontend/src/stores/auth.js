@@ -1,0 +1,58 @@
+import { defineStore } from 'pinia'
+import { api } from 'src/boot/axios'
+
+export const useAuthStore = defineStore('auth', {
+    state: () => ({
+        token: localStorage.getItem('token') || null,
+        user: JSON.parse(localStorage.getItem('user')) || null
+    }),
+
+    getters: {
+        isAuthenticated: (state) => !!state.token,
+        getUser: (state) => state.user
+    },
+
+    actions: {
+        async login(username, password) {
+            try {
+                const formData = new FormData()
+                formData.append('username', username)
+                formData.append('password', password)
+
+                const response = await api.post('/token', formData)
+                this.setAuth(response.data)
+                return true
+            } catch (error) {
+                console.error('Login error:', error)
+                return false
+            }
+        },
+
+        async googleSignIn(credential) {
+            try {
+                const response = await api.post('/google', { token: credential })
+                this.setAuth(response.data)
+                return true
+            } catch (error) {
+                console.error('Google sign-in error:', error)
+                return false
+            }
+        },
+
+        setAuth(data) {
+            this.token = data.access_token
+            localStorage.setItem('token', data.access_token)
+
+            // Set the token in axios defaults
+            api.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`
+        },
+
+        logout() {
+            this.token = null
+            this.user = null
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            delete api.defaults.headers.common['Authorization']
+        }
+    }
+}) 
