@@ -1,0 +1,19 @@
+services:
+    sherlock-ai-assignment-service:
+      container_name: sherlock-ai-assignment-service
+      image: ghcr.io/lockhart07/sherlock-ai-assignment:latest
+      pull_policy: always
+      tty: true
+      stdin_open: true
+      ports:
+        - "8000:8000"
+      healthcheck:
+        test: ["CMD", "python3", "-c", "import requests; r=requests.get('http://localhost:9000/ping'); r.raise_for_status()"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+        start_period: 30s
+      environment:
+        SECRET_KEY: ${SECRET_KEY}
+        GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+        GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
