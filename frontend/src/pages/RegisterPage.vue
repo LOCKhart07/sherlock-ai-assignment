@@ -46,12 +46,14 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { useAuthStore } from 'src/stores/auth'
 
 export default {
     name: 'RegisterPage',
     setup() {
         const $q = useQuasar()
         const router = useRouter()
+        const authStore = useAuthStore()
         const email = ref('')
         const username = ref('')
         const password = ref('')
@@ -65,36 +67,27 @@ export default {
         const onSubmit = async () => {
             try {
                 loading.value = true
-                const response = await fetch('http://localhost:3000/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: email.value,
-                        username: username.value,
-                        password: password.value,
-                        full_name: fullName.value,
-                        bio: bio.value,
-                        phone: phone.value,
-                        photo_url: photoUrl.value,
-                    }),
+                await authStore.register({
+                    email: email.value,
+                    username: username.value,
+                    password: password.value,
+                    full_name: fullName.value,
+                    bio: bio.value,
+                    phone: phone.value,
+                    photo_url: photoUrl.value,
                 })
 
-                if (response.ok) {
-                    $q.notify({
-                        color: 'positive',
-                        message: 'Registration successful! Please login.',
-                    })
-                    router.push('/login')
-                } else {
-                    const error = await response.json()
-                    throw new Error(error.detail || 'Registration failed')
-                }
+
+
+                $q.notify({
+                    color: 'positive',
+                    message: 'Registration successful! Please login.',
+                })
+                router.push('/login')
             } catch (error) {
                 $q.notify({
                     color: 'negative',
-                    message: error.message || 'Registration failed',
+                    message: error.message + "bruuu" || 'Registration failed',
                 })
             } finally {
                 loading.value = false

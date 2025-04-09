@@ -13,6 +13,24 @@ export const useAuthStore = defineStore('auth', {
     },
 
     actions: {
+        async register(userData) {
+            try {
+                const response = await api.post('/register', userData)
+                if (response.status === 200) {
+                    this.setAuth(response.data)
+                    return true
+                } else {
+                    console.log("response errorrrr", response.data)
+                    throw new Error(response.data.detail || 'Registration failed')
+                }
+            }
+            catch (error) {
+                console.log("response terrorrrr", error.response.data)
+                throw new Error(error.response.data.detail || 'Registration failed')
+            }
+
+        },
+
         async login(username, password) {
             try {
                 const formData = new FormData()
