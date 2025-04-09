@@ -11,3 +11,5 @@ __all__ = [
     "Token",
     "TokenData",
 ]
+
+# This file makes the models directory a Python package

@@ -1,51 +1,23 @@
-from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-from datetime import datetime, timedelta
-from typing import Optional
-import os
-from dotenv import load_dotenv
-import requests
-from passlib.context import CryptContext
+from sqlalchemy.orm import Session
+from datetime import timedelta
 
-from models import Base, User, UserCreate, UserUpdate, UserInDB, Token, TokenData
-
-# Load environment variables
-load_dotenv()
-
-# Password hashing
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-# Database setup
-SQLALCHEMY_DATABASE_URL = "sqlite:///./auth.db"
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
+from db.session import get_db, engine
+from db.base import Base
+from models.user import User
+from schemas.user import UserCreate, UserInDB, Token
+from core.security import (
+    get_password_hash,
+    verify_password,
+    create_access_token,
+    get_current_user,
+    ACCESS_TOKEN_EXPIRE_MINUTES,
 )
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
-
-
-# Helper functions
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
-
 
 # FastAPI app
 app = FastAPI()
@@ -103,6 +75,29 @@ def register_user(user: UserCreate, db: Session = Depends(get_db)):
     db.refresh(db_user)
 
     return db_user
+
+
+@app.post("/token", response_model=Token)
+async def login_for_access_token(
+    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
+):
+    user = db.query(User).filter(User.username == form_data.username).first()
+    if not user or not verify_password(form_data.password, user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.username}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@app.get("/users/me", response_model=UserInDB)
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return current_user
 
 
 if __name__ == "__main__":
