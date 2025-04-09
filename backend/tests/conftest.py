@@ -30,25 +30,25 @@ def test_engine():
     Base.metadata.create_all(bind=engine)
     yield engine
     # Clean up after tests
-    # Base.metadata.drop_all(bind=engine)
+    Base.metadata.drop_all(bind=engine)
 
     # Close all connections to the database
     engine.dispose()
 
     # Try to remove the database file with retries
-    # if os.path.exists(TEST_DB_PATH):
-    #     max_attempts = 5
-    #     for attempt in range(max_attempts):
-    #         try:
-    #             os.remove(TEST_DB_PATH)
-    #             break
-    #         except PermissionError:
-    #             if attempt < max_attempts - 1:
-    #                 time.sleep(1)  # Wait a second before trying again
-    #             else:
-    #                 print(
-    #                     f"Warning: Could not remove test database file: {TEST_DB_PATH}"
-    #                 )
+    if os.path.exists(TEST_DB_PATH):
+        max_attempts = 5
+        for attempt in range(max_attempts):
+            try:
+                os.remove(TEST_DB_PATH)
+                break
+            except PermissionError:
+                if attempt < max_attempts - 1:
+                    time.sleep(1)  # Wait a second before trying again
+                else:
+                    print(
+                        f"Warning: Could not remove test database file: {TEST_DB_PATH}"
+                    )
 
 
 @pytest.fixture(scope="function")
