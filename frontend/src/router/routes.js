@@ -3,10 +3,10 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/CoinPage.vue') },
+      { path: '', redirect: { name: 'profile' } },
       { path: 'login', component: () => import('pages/LoginPage.vue') },
       { path: 'register', component: () => import('pages/RegisterPage.vue') },
-      { path: 'profile', component: () => import('pages/UserProfilePage.vue') },
+      { path: 'profile', component: () => import('pages/UserProfilePage.vue'), name: 'profile' },
       { path: 'coin', component: () => import('pages/CoinPage.vue') },
       { path: 'weather', component: () => import('pages/WeatherPage.vue') },
     ]
