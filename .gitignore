@@ -2,4 +2,4 @@ Assignment_Backend Engineer.pdf
 auth.db
 .env
 __pycache__
-test_*
+test_*.db

@@ -15,6 +15,5 @@ class User(Base):
     bio = Column(String, nullable=True)
     phone = Column(String, nullable=True)
     photo_url = Column(String, nullable=True)
-    is_active = Column(Boolean, default=True)
     google_id = Column(String, nullable=True)
     facebook_id = Column(String, nullable=True)

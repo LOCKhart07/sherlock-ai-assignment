@@ -8,7 +8,13 @@ from core.google_oauth import verify_google_token
 from core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from db.session import get_db
 from models.user import User
-from schemas.user import UserCreate, Token, UserResponse, UserUpdate
+from schemas.user import (
+    UserCreate,
+    Token,
+    UserResponse,
+    UserUpdate,
+    TokenWithUserResponse,
+)
 
 from core.security import (
     get_password_hash,
@@ -59,11 +65,15 @@ async def google_auth(token: dict, db: Session = Depends(get_db)):
 
 @router.post("/register", response_model=Token)
 async def register_user(user: UserCreate, db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.username == user.username).first()
+    db_user = (
+        db.query(User)
+        .filter((User.username == user.username) | (User.email == user.email))
+        .first()
+    )
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Username already registered",
+            detail="Username or email already registered",
         )
 
     hashed_password = get_password_hash(user.password)
@@ -72,8 +82,6 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
         email=user.email,
         hashed_password=hashed_password,
         full_name=user.full_name,
-        is_active=True,
-        is_superuser=False,
     )
     db.add(db_user)
     db.commit()
