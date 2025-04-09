@@ -8,9 +8,7 @@
           Weather Dashboard
         </q-toolbar-title>
 
-        <q-btn flat round dense icon="notifications">
-          <q-badge color="red" floating>2</q-badge>
-        </q-btn>
+
       </q-toolbar>
     </q-header>
 
