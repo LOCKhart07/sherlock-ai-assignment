@@ -27,6 +27,10 @@ class UserInDB(UserBase):
         from_attributes = True
 
 
+class UserResponse(UserBase):
+    id: int
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str

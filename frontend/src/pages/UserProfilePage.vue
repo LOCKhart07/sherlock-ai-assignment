@@ -45,61 +45,50 @@
     </q-page>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar } from 'quasar'
+// import { useQuasar } from 'quasar'
+import { useAuthStore } from 'src/stores/auth'
 
-export default {
-    name: 'UserProfilePage',
-    setup() {
-        const $q = useQuasar()
-        const router = useRouter()
-        const user = ref({})
+// const $q = useQuasar()
+const router = useRouter()
+const user = ref({})
+const { getUserProfile } = useAuthStore()
 
-        const fetchUserProfile = async () => {
-            try {
-                const token = localStorage.getItem('token')
-                if (!token) {
-                    router.push('/login')
-                    return
-                }
-
-                const response = await fetch('http://localhost:3000/users/me', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
-                })
-
-                if (response.ok) {
-                    user.value = await response.json()
-                } else {
-                    throw new Error('Failed to fetch user profile')
-                }
-            } catch (error) {
-                $q.notify({
-                    color: 'negative',
-                    message: error.message || 'Failed to fetch user profile',
-                })
-                router.push('/login')
-            }
-        }
-
-        const logout = () => {
-            localStorage.removeItem('token')
+const fetchUserProfileLocal = async () => {
+    try {
+        const token = localStorage.getItem('token')
+        if (!token) {
             router.push('/login')
+            return
         }
 
-        onMounted(() => {
-            fetchUserProfile()
-        })
+        const response = await getUserProfile()
+        console.log("response", response)
 
-        return {
-            user,
-            logout,
-        }
-    },
+
+        user.value = response
+
+    } catch (error) {
+        // $q.notify({
+        //     color: 'negative',
+        //     message: error.message || 'Failed to fetch user profile',
+        // })
+        console.log("error", error)
+        router.push('/login')
+    }
 }
+
+const logout = () => {
+    localStorage.removeItem('token')
+    router.push('/login')
+}
+
+onMounted(() => {
+    fetchUserProfileLocal()
+})
+
 </script>
 
 <style scoped>

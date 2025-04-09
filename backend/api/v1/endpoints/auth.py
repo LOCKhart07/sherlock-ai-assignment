@@ -32,7 +32,9 @@ async def login_for_access_token(
 
 
 @router.post("/google", response_model=Token)
-async def google_auth(token: str, db: Session = Depends(get_db)):
+async def google_auth(token: dict, db: Session = Depends(get_db)):
+    token = token.get("token")
+    print("google_auth", token)
     user = await verify_google_token(token, db)
     if not user:
         raise HTTPException(

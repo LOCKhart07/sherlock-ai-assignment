@@ -28,7 +28,18 @@ export const useAuthStore = defineStore('auth', {
             }
         },
 
+        async getUserProfile() {
+            console.log("getUserProfile", this.token)
+            const response = await api.get('/users/me', {
+                headers: {
+                    Authorization: `Bearer ${this.token}`
+                }
+            })
+            return response.data
+        },
+
         async googleSignIn(credential) {
+            console.log("googleSignIn", credential)
             try {
                 const response = await api.post('/google', { token: credential })
                 this.setAuth(response.data)

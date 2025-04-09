@@ -18,8 +18,6 @@ const router = useRouter()
 const authStore = useAuthStore()
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
 
-console.log(clientId)
-
 onMounted(() => {
     // Wait for Google script to load
     const waitForGoogle = setInterval(() => {
@@ -50,10 +48,13 @@ onMounted(() => {
 
 // Define the callback function outside onMounted to avoid recreation
 async function handleCredentialResponse(response) {
+    console.log("handleCredentialResponse")
+    console.log(response.credential)
     try {
+        await new Promise(resolve => setTimeout(resolve, 500));
         const result = await authStore.googleSignIn(response.credential)
         if (result) {
-            router.push('/dashboard')
+            router.push('/profile')
         }
     } catch (error) {
         console.error('Google sign-in error:', error)

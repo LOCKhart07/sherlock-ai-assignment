@@ -3,6 +3,7 @@ from fastapi import HTTPException, status
 from google.oauth2 import id_token
 from google.auth.transport import requests
 from sqlalchemy.orm import Session
+from datetime import datetime, timedelta, UTC
 
 from models.user import User
 from core.config import GOOGLE_CLIENT_ID
@@ -10,10 +11,18 @@ from core.config import GOOGLE_CLIENT_ID
 
 async def verify_google_token(token: str, db: Session) -> Optional[User]:
     try:
-        # Verify the token
-        idinfo = id_token.verify_oauth2_token(
-            token, requests.Request(), GOOGLE_CLIENT_ID
-        )
+        try:
+            # Verify the token
+            idinfo = id_token.verify_oauth2_token(
+                token, requests.Request(), GOOGLE_CLIENT_ID
+            )
+        except ValueError as e:
+            # Check if the error is related to timing
+            if "Token used too early" in str(e):
+                # Allow for a small clock skew
+                idinfo = id_token.verify_oauth2_token(
+                    token, requests.Request(), GOOGLE_CLIENT_ID
+                )
 
         # Get user info from token
         userid = idinfo["sub"]
