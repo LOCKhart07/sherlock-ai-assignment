@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
@@ -47,6 +47,12 @@ const username = ref('')
 const password = ref('')
 const isPwd = ref(true)
 const loading = ref(false)
+
+onMounted(() => {
+    if (authStore.isAuthenticated) {
+        router.push('/profile')
+    }
+})
 
 const onSubmit = async () => {
     try {

@@ -15,7 +15,13 @@
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
         <q-item-label header>Navigation</q-item-label>
-        <q-item clickable v-ripple to="/profile">
+        <q-item clickable v-ripple :to="{ name: 'home' }" exact active-class="q-item--active">
+          <q-item-section avatar>
+            <q-icon name="home" />
+          </q-item-section>
+          <q-item-section>Home</q-item-section>
+        </q-item>
+        <q-item clickable v-ripple to="/profile" exact active-class="q-item--active">
           <q-item-section avatar>
             <q-icon name="person" />
           </q-item-section>
@@ -23,13 +29,14 @@
         </q-item>
 
 
-        <q-item clickable v-ripple to="/coin">
+        <q-item clickable v-ripple to="/coin" exact active-class="q-item--active">
           <q-item-section avatar>
             <q-icon name="monetization_on" />
           </q-item-section>
           <q-item-section>Coins</q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/weather" exact>
+
+        <q-item clickable v-ripple to="/weather" exact active-class="q-item--active">
           <q-item-section avatar>
             <q-icon name="cloud" />
           </q-item-section>
