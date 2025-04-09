@@ -38,6 +38,20 @@ export const useAuthStore = defineStore('auth', {
             return response.data
         },
 
+        async updateUserProfile(userData) {
+            try {
+                const response = await api.put('/users/me', userData, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    }
+                })
+                return response.data
+            } catch (error) {
+                console.error('Update profile error:', error)
+                throw error
+            }
+        },
+
         async googleSignIn(credential) {
             console.log("googleSignIn", credential)
             try {

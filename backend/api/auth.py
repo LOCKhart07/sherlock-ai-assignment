@@ -8,10 +8,7 @@ from core.google_oauth import verify_google_token
 from core.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from db.session import get_db
 from models.user import User
-from schemas.user import UserCreate, Token
-
-from models.user import User
-from schemas.user import UserCreate, UserInDB, Token, UserResponse
+from schemas.user import UserCreate, Token, UserResponse, UserUpdate
 
 from core.security import (
     get_password_hash,
@@ -91,5 +88,22 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
 
 @router.get("/users/me", response_model=UserResponse)
 async def read_users_me(current_user: User = Depends(get_current_user)):
-    print("current_user")
+    return current_user
+
+
+@router.put("/users/me", response_model=UserResponse)
+async def update_user_profile(
+    user_update: UserUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    # Update user fields if provided
+    for field, value in user_update.model_dump(exclude_unset=True).items():
+        if field == "password" and value:
+            value = get_password_hash(value)
+            field = "hashed_password"
+        setattr(current_user, field, value)
+
+    db.commit()
+    db.refresh(current_user)
     return current_user

@@ -12,28 +12,34 @@
                     </q-card-section>
 
                     <q-card-section>
-                        <q-list>
-                            <q-item>
-                                <q-item-section>
-                                    <q-item-label caption>Email</q-item-label>
-                                    <q-item-label>{{ user.email }}</q-item-label>
-                                </q-item-section>
-                            </q-item>
+                        <q-form @submit="onSubmit" class="q-gutter-md">
+                            <q-input v-model="editForm.photo_url" label="Photo URL" outlined />
 
-                            <q-item v-if="user.phone">
-                                <q-item-section>
-                                    <q-item-label caption>Phone</q-item-label>
-                                    <q-item-label>{{ user.phone }}</q-item-label>
-                                </q-item-section>
-                            </q-item>
+                            <q-input v-model="editForm.full_name" label="Full Name"
+                                :rules="[val => !!val || 'Full name is required']" outlined />
 
-                            <q-item v-if="user.bio">
-                                <q-item-section>
-                                    <q-item-label caption>Bio</q-item-label>
-                                    <q-item-label>{{ user.bio }}</q-item-label>
-                                </q-item-section>
-                            </q-item>
-                        </q-list>
+                            <q-input v-model="editForm.email" label="Email" type="email" :rules="[
+                                val => !!val || 'Email is required',
+                                val => /^[^@]+@[^@]+\.[^@]+$/.test(val) || 'Invalid email format'
+                            ]" outlined />
+
+                            <q-input v-model="editForm.phone" label="Phone" outlined />
+
+                            <q-input v-model="editForm.bio" label="Bio" type="textarea" outlined />
+                            {{ editForm.password }}
+                            <q-input v-model="editForm.password" label="New Password (leave blank to keep current)"
+                                :type="isPwd ? 'password' : 'text'" outlined>
+                                <template v-slot:append>
+                                    <q-icon :name="isPwd ? 'visibility_off' : 'visibility'" class="cursor-pointer"
+                                        @click="isPwd = !isPwd" />
+                                </template>
+                            </q-input>
+
+                            <div class="row q-gutter-sm justify-end">
+                                <q-btn label="Cancel" color="grey" @click="cancelEdit" />
+                                <q-btn label="Save Changes" type="submit" color="primary" :loading="loading" />
+                            </div>
+                        </q-form>
                     </q-card-section>
 
                     <q-card-actions align="right">
@@ -48,13 +54,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-// import { useQuasar } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
 
-// const $q = useQuasar()
+const $q = useQuasar()
 const router = useRouter()
 const user = ref({})
-const { getUserProfile } = useAuthStore()
+const editForm = ref({})
+const isPwd = ref(true)
+const loading = ref(false)
+const { getUserProfile, updateUserProfile } = useAuthStore()
 
 const fetchUserProfileLocal = async () => {
     try {
@@ -65,18 +74,75 @@ const fetchUserProfileLocal = async () => {
         }
 
         const response = await getUserProfile()
-        console.log("response", response)
-
-
         user.value = response
+        // Initialize edit form with current values
+        editForm.value = {
+            username: response.username,
+            photo_url: response.photo_url || '',
+            full_name: response.full_name,
+            email: response.email,
+            phone: response.phone || '',
+            bio: response.bio || '',
+            password: ''
+        }
 
     } catch (error) {
-        // $q.notify({
-        //     color: 'negative',
-        //     message: error.message || 'Failed to fetch user profile',
-        // })
+        $q.notify({
+            color: 'negative',
+            message: error.message || 'Failed to fetch user profile',
+        })
         console.log("error", error)
         router.push('/login')
+    }
+}
+
+const onSubmit = async () => {
+    try {
+        loading.value = true
+        console.log("editForm.value", editForm.value)
+        // Remove empty password field
+        if (!editForm.value.password) {
+            delete editForm.value.password
+        }
+
+        const updatedUser = await updateUserProfile(editForm.value)
+        if (editForm.value.password) {
+            $q.notify({
+                color: 'positive',
+                message: 'Password updated successfully. Please login again.',
+            })
+            logout()
+
+        }
+        user.value = updatedUser
+
+        $q.notify({
+            color: 'positive',
+            message: 'Profile updated successfully',
+        })
+
+        // Reset password field
+        // editForm.value.password = ''
+
+    } catch (error) {
+        $q.notify({
+            color: 'negative',
+            message: error.message || 'Failed to update profile',
+        })
+    } finally {
+        loading.value = false
+    }
+}
+
+const cancelEdit = () => {
+    // Reset form to current user values
+    editForm.value = {
+        photo_url: user.value.photo_url || '',
+        full_name: user.value.full_name,
+        email: user.value.email,
+        phone: user.value.phone || '',
+        bio: user.value.bio || '',
+        password: ''
     }
 }
 
@@ -88,7 +154,6 @@ const logout = () => {
 onMounted(() => {
     fetchUserProfileLocal()
 })
-
 </script>
 
 <style scoped>
