@@ -1,0 +1,1 @@
+- Binance api was at https://api.binance.com/api/v3/ticker/24hr not data
