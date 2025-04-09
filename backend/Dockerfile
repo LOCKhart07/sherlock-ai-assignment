@@ -22,7 +22,7 @@ COPY --chown=sherlock:sherlock ./ /code
 ENV PATH="/home/sherlock/.local/bin:${PATH}"
 
 # Expose the port
-EXPOSE 9000
+EXPOSE 3000
 
 # Set the maintainer
 LABEL maintainer="Jenslee Dsouza <dsouzajenslee@gmail.com>"
