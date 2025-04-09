@@ -3,29 +3,175 @@
         <h1>Coin Page</h1>
     </div>
     <div class="q-pa-md">
-        <q-table title="Coins" :rows="coins" row-key="name" :pagination="{ rowsPerPage: 10 }" />
+        <q-table title="Cryptocurrency Market" :rows="coins" :columns="columns" row-key="symbol"
+            :pagination="{ rowsPerPage: 10 }" @row-click="onRowClick" />
+
+        <q-dialog v-model="showCoinDetails">
+            <q-card style="min-width: 350px">
+                <q-card-section class="row items-center q-pb-none">
+                    <div class="text-h6">{{ selectedCoin?.symbol }}</div>
+                    <q-space />
+                    <q-btn icon="close" flat round dense v-close-popup />
+                </q-card-section>
+
+                <q-card-section v-if="selectedCoin">
+                    <div class="row q-col-gutter-md">
+                        <!-- Price Information -->
+                        <div class="col-12">
+                            <div class="text-h4">
+                                {{ selectedCoin.lastPrice }}
+                                <q-chip :color="getPriceChangeColor(selectedCoin.priceChangePercent)"
+                                    text-color="white">
+                                    {{ selectedCoin.priceChangePercent }}%
+                                    <q-icon :name="getPriceChangeIcon(selectedCoin.priceChangePercent)"
+                                        class="q-ml-sm" />
+                                </q-chip>
+                            </div>
+                        </div>
+
+                        <!-- Price Stats -->
+                        <div class="col-12 col-md-6">
+                            <q-list>
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item-label caption>24h High</q-item-label>
+                                        <q-item-label>{{ selectedCoin.highPrice }}</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item-label caption>24h Low</q-item-label>
+                                        <q-item-label>{{ selectedCoin.lowPrice }}</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                            </q-list>
+                        </div>
+
+                        <!-- Volume Stats -->
+                        <div class="col-12 col-md-6">
+                            <q-list>
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item-label caption>Volume</q-item-label>
+                                        <q-item-label>{{ selectedCoin.volume }}</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item-label caption>Quote Volume</q-item-label>
+                                        <q-item-label>{{ selectedCoin.quoteVolume }}</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                            </q-list>
+                        </div>
+
+                        <!-- Market Stats -->
+                        <div class="col-12">
+                            <q-list bordered class="rounded-borders">
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item-label caption>Bid Price</q-item-label>
+                                        <q-item-label>{{ selectedCoin.bidPrice }} ({{ selectedCoin.bidQty
+                                            }})</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                                <q-item>
+                                    <q-item-section>
+                                        <q-item-label caption>Ask Price</q-item-label>
+                                        <q-item-label>{{ selectedCoin.askPrice }} ({{ selectedCoin.askQty
+                                            }})</q-item-label>
+                                    </q-item-section>
+                                </q-item>
+                            </q-list>
+                        </div>
+                    </div>
+                </q-card-section>
+            </q-card>
+        </q-dialog>
     </div>
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCoinStore } from 'src/stores/coin'
 
 const coinStore = useCoinStore()
-
 const { coins } = storeToRefs(coinStore)
-// const columns = [
-//     { name: 'symbol', label: 'Symbol', align: 'left', field: 'symbol' },
-//     { name: 'priceChange', label: 'Price Change', align: 'right', field: 'priceChange' },
-//     { name: 'lastPrice', label: 'Last Price', align: 'right', field: 'lastPrice' },
-//     { name: 'highPrice', label: 'High Price', align: 'right', field: 'highPrice' },
-//     { name: 'lowPrice', label: 'Low Price', align: 'right', field: 'lowPrice' },
-//     { name: 'volume', label: 'Volume', align: 'right', field: 'volume' }
-// ]
+const showCoinDetails = ref(false)
+const selectedCoin = ref(null)
 
+const columns = [
+    {
+        name: 'symbol',
+        label: 'Symbol',
+        align: 'left',
+        field: 'symbol',
+        sortable: true
+    },
+    {
+        name: 'lastPrice',
+        label: 'Price',
+        align: 'right',
+        field: 'lastPrice',
+        sortable: true
+    },
+    {
+        name: 'priceChangePercent',
+        label: 'Change 24h',
+        align: 'right',
+        field: 'priceChangePercent',
+        sortable: true,
+        format: (val) => `${val}%`,
+        style: (val) => ({ color: val >= 0 ? 'green' : 'red' })
+    },
+    {
+        name: 'volume',
+        label: 'Volume',
+        align: 'right',
+        field: 'volume',
+        sortable: true
+    },
+    {
+        name: 'highPrice',
+        label: '24h High',
+        align: 'right',
+        field: 'highPrice',
+        sortable: true
+    },
+    {
+        name: 'lowPrice',
+        label: '24h Low',
+        align: 'right',
+        field: 'lowPrice',
+        sortable: true
+    }
+]
+
+function onRowClick(evt, row) {
+    selectedCoin.value = row
+    showCoinDetails.value = true
+}
+
+function getPriceChangeColor(change) {
+    return parseFloat(change) >= 0 ? 'positive' : 'negative'
+}
+
+function getPriceChangeIcon(change) {
+    return parseFloat(change) >= 0 ? 'arrow_upward' : 'arrow_downward'
+}
 
 onMounted(async () => {
     await coinStore.fetchCoins()
 })
 </script>
+
+<style scoped>
+.positive {
+    background-color: #21ba45 !important;
+}
+
+.negative {
+    background-color: #c10015 !important;
+}
+</style>
