@@ -6,19 +6,6 @@
                 <div class="row items-center justify-between q-mb-md">
                     <div class="text-h5 q-ma-none">Weather Stations</div>
                     <div class="row items-center q-gutter-md">
-                        <q-input v-model="selectedDate" filled dense style="width: 200px" mask="date" :rules="['date']">
-                            <template v-slot:append>
-                                <q-icon name="event" class="cursor-pointer">
-                                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                        <q-date v-model="selectedDate">
-                                            <div class="row items-center justify-end">
-                                                <q-btn v-close-popup label="Close" color="primary" flat />
-                                            </div>
-                                        </q-date>
-                                    </q-popup-proxy>
-                                </q-icon>
-                            </template>
-                        </q-input>
                         <q-btn-toggle v-model="viewMode" :options="[
                             { label: 'Map View', icon: 'map', value: 0 },
                             { label: 'Table View', icon: 'table_chart', value: 1 }
@@ -204,7 +191,7 @@ const columns = [
 ]
 
 onMounted(async () => {
-    await fetchWeather(selectedDate.value)
+    await fetchWeather(null)
     tableData.value = stations.value
     if (viewMode.value === 0) {
         initializeMap()
