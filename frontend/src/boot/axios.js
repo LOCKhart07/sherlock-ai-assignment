@@ -8,7 +8,7 @@ import axios from 'axios'
 // "export default () => {}" function below (which runs individually
 // for each client)
 
-const api = axios.create({ baseURL: 'http://localhost:8000/' })
+const api = axios.create({ baseURL: window.location.hostname === 'localhost' ? 'http://localhost:3000/sherlock-ai/api' : 'https://lockhart.in/sherlock-ai/api' })
 const coinApi = axios.create({ baseURL: 'https://data-api.binance.vision/api/v3' })
 const weatherApi = axios.create({ baseURL: 'https://api.data.gov.sg/v1/' })
 export default defineBoot(({ app }) => {

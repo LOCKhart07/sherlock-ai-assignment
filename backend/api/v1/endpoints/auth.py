@@ -10,7 +10,18 @@ from db.session import get_db
 from models.user import User
 from schemas.user import UserCreate, Token
 
-router = APIRouter()
+from models.user import User
+from schemas.user import UserCreate, UserInDB, Token, UserResponse
+
+from core.security import (
+    get_password_hash,
+    verify_password,
+    create_access_token,
+    get_current_user,
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+)
+
+router = APIRouter(prefix="/sherlock-ai/api")
 
 
 @router.post("/token", response_model=Token)
@@ -76,3 +87,9 @@ async def register_user(user: UserCreate, db: Session = Depends(get_db)):
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/users/me", response_model=UserResponse)
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    print("current_user")
+    return current_user
