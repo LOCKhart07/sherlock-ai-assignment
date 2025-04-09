@@ -16,7 +16,7 @@ COPY --chown=sherlock:sherlock ./requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt --user --no-warn-script-location
 
 # Copy application code
-COPY --chown=sherlock:sherlock ./ /code/app
+COPY --chown=sherlock:sherlock ./ /code
 
 # Ensure user-installed packages are in PATH
 ENV PATH="/home/sherlock/.local/bin:${PATH}"
@@ -28,4 +28,4 @@ EXPOSE 9000
 LABEL maintainer="Jenslee Dsouza <dsouzajenslee@gmail.com>"
 
 # Start Uvicorn with the root path
-CMD ["uvicorn", "app.app:app", "--host", "0.0.0.0", "--port", "3000", "--proxy-headers"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "3000", "--proxy-headers"]
