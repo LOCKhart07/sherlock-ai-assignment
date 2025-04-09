@@ -5,7 +5,7 @@
         <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
 
         <q-toolbar-title>
-          Weather Dashboard
+          SherlockAI Assignment - Jenslee Dsouza
         </q-toolbar-title>
 
 
@@ -15,7 +15,20 @@
     <q-drawer v-model="leftDrawerOpen" bordered>
       <q-list>
         <q-item-label header>Navigation</q-item-label>
+        <q-item clickable v-ripple to="/profile">
+          <q-item-section avatar>
+            <q-icon name="person" />
+          </q-item-section>
+          <q-item-section>Profile</q-item-section>
+        </q-item>
 
+
+        <q-item clickable v-ripple to="/coin">
+          <q-item-section avatar>
+            <q-icon name="monetization_on" />
+          </q-item-section>
+          <q-item-section>Coins</q-item-section>
+        </q-item>
         <q-item clickable v-ripple to="/weather" exact>
           <q-item-section avatar>
             <q-icon name="cloud" />
@@ -23,12 +36,8 @@
           <q-item-section>Weather Stations</q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/profile">
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>Profile</q-item-section>
-        </q-item>
+
+
 
         <q-separator />
 

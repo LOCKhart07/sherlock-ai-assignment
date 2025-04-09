@@ -1,6 +1,7 @@
 <template>
-    <div>
-        <h1>Coin Page</h1>
+    <div class="coin-page">
+        <h1 class="text-h3">Cryptocurrency Overview</h1>
+        <p class="description">Explore the latest trends and prices in the cryptocurrency market.</p>
     </div>
 
     <div class="q-pa-md">
@@ -78,14 +79,14 @@
                                     <q-item-section>
                                         <q-item-label caption>Bid Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.bidPrice }} ({{ selectedCoin.bidQty
-                                            }})</q-item-label>
+                                        }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                                 <q-item>
                                     <q-item-section>
                                         <q-item-label caption>Ask Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.askPrice }} ({{ selectedCoin.askQty
-                                            }})</q-item-label>
+                                        }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -175,7 +176,7 @@ const columns = [
         field: 'priceChangePercent',
         sortable: true,
         format: (val) => `${val}%`,
-        style: (val) => ({ color: val >= 0 ? 'green' : 'red' })
+        style: (val) => ({ color: val.priceChangePercent >= 0 ? 'green' : 'red' })
     },
     {
         name: 'volume',
@@ -246,10 +247,54 @@ onMounted(async () => {
 <style scoped>
 .positive {
     background-color: #21ba45 !important;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
 }
 
 .negative {
     background-color: #c10015 !important;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.coin-page {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.text-h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.description {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.q-table {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.q-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    text-align: left;
+}
+
+.q-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.q-table tr:hover {
+    background-color: #f9f9f9;
 }
 
 .chart-container {
@@ -262,5 +307,20 @@ onMounted(async () => {
 .full-width {
     width: 90vw;
     max-width: 1200px;
+}
+
+@media (max-width: 768px) {
+    .text-h3 {
+        font-size: 2rem;
+    }
+
+    .description {
+        font-size: 1rem;
+    }
+
+    .q-table th,
+    .q-table td {
+        padding: 8px;
+    }
 }
 </style>
