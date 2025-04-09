@@ -48,7 +48,6 @@ async def login_for_access_token(
 @router.post("/google", response_model=Token)
 async def google_auth(token: dict, db: Session = Depends(get_db)):
     token = token.get("token")
-    print("google_auth", token)
     user = await verify_google_token(token, db)
     if not user:
         raise HTTPException(
@@ -107,9 +106,11 @@ async def update_user_profile(
 ):
     # Update user fields if provided
     for field, value in user_update.model_dump(exclude_unset=True).items():
+        print("field", field, "value", value)
         if field == "password" and value:
             value = get_password_hash(value)
             field = "hashed_password"
+            print("field", field, "value", value)
         setattr(current_user, field, value)
 
     db.commit()

@@ -11,6 +11,7 @@ from core.config import GOOGLE_CLIENT_ID
 
 async def verify_google_token(token: str, db: Session) -> Optional[User]:
     try:
+        idinfo = None
         try:
             # Verify the token
             idinfo = id_token.verify_oauth2_token(
@@ -23,6 +24,12 @@ async def verify_google_token(token: str, db: Session) -> Optional[User]:
                 idinfo = id_token.verify_oauth2_token(
                     token, requests.Request(), GOOGLE_CLIENT_ID
                 )
+        if not idinfo:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Could not validate Google credentials",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
 
         # Get user info from token
         userid = idinfo["sub"]
