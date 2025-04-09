@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from datetime import timedelta
+from api.v1.endpoints import auth
 
 from db.session import get_db, engine
 from db.base import Base
@@ -99,9 +100,6 @@ async def login_for_access_token(
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user
 
-
-from fastapi import FastAPI
-from api.v1.endpoints import auth
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
