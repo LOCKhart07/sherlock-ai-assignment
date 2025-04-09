@@ -10,11 +10,13 @@ import axios from 'axios'
 
 const api = axios.create({ baseURL: 'http://localhost:3000/api' })
 const coinApi = axios.create({ baseURL: 'https://data-api.binance.vision/api/v3' })
+const weatherApi = axios.create({ baseURL: 'https://api.data.gov.sg/v1/' })
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Composition API) through inject
   app.provide('axios', axios)
   app.provide('api', api)
   app.provide('coinApi', coinApi)
+  app.provide('weatherApi', weatherApi)
 })
 
-export { api, coinApi }
+export { api, coinApi, weatherApi }
