@@ -1,51 +1,65 @@
 <template>
-    <div class="q-pa-md">
-        <div class="row items-center q-mb-md">
-            <h1 class="q-ma-none">Weather Stations</h1>
-            <q-space />
-            <div class="row items-center q-gutter-md">
-                <!-- <div class="q-pa-md" style="max-width: 300px">
-                    <q-input filled v-model="selectedDate" mask="date" :rules="['date']">
-                        <template v-slot:append>
-                            <q-icon name="event" class="cursor-pointer">
-                                <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                                    <q-date v-model="selectedDate">
-                                        <div class="row items-center justify-end">
-                                            <q-btn v-close-popup label="Close" color="primary" flat />
-                                        </div>
-                                    </q-date>
-                                </q-popup-proxy>
-                            </q-icon>
-                        </template>
-</q-input>
-</div> -->
-                <q-btn-toggle v-model="viewMode" :options="[
-                    { label: 'Map View', icon: 'map', value: 0 },
-                    { label: 'Table View', icon: 'table_chart', value: 1 }
-                ]" />
-            </div>
-        </div>
-
-        <div v-if="stations.length === 0" class="q-pa-md">
-            <q-spinner color="primary" />
-        </div>
-        <div v-else>
-            <!-- Weather Map -->
-            <div v-show="viewMode === 0" class="map-container q-mb-md">
-                <div id="weather-map" ref="mapRef"></div>
+    <q-page class="q-pa-md">
+        <div class="row q-col-gutter-md">
+            <!-- Header Section -->
+            <div class="col-12">
+                <div class="row items-center justify-between q-mb-md">
+                    <div class="text-h5 q-ma-none">Weather Stations</div>
+                    <div class="row items-center q-gutter-md">
+                        <q-input v-model="selectedDate" filled dense style="width: 200px" mask="date" :rules="['date']">
+                            <template v-slot:append>
+                                <q-icon name="event" class="cursor-pointer">
+                                    <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                                        <q-date v-model="selectedDate">
+                                            <div class="row items-center justify-end">
+                                                <q-btn v-close-popup label="Close" color="primary" flat />
+                                            </div>
+                                        </q-date>
+                                    </q-popup-proxy>
+                                </q-icon>
+                            </template>
+                        </q-input>
+                        <q-btn-toggle v-model="viewMode" :options="[
+                            { label: 'Map View', icon: 'map', value: 0 },
+                            { label: 'Table View', icon: 'table_chart', value: 1 }
+                        ]" />
+                    </div>
+                </div>
             </div>
 
-            <!-- Weather Table -->
-            <q-table v-show="viewMode" title="Weather Station Readings" :rows="tableData" :columns="columns"
-                row-key="id" :pagination="{ rowsPerPage: 10 }">
-                <template v-slot:body-cell-temperature="props">
-                    <q-td :props="props">
-                        {{ props.value }}°C
-                    </q-td>
-                </template>
-            </q-table>
+            <!-- Loading State -->
+            <div v-if="stations.length === 0" class="col-12 flex flex-center" style="min-height: 400px">
+                <q-spinner color="primary" size="3em" />
+            </div>
+
+            <!-- Content Section -->
+            <div v-else class="col-12">
+                <!-- Weather Map -->
+                <div v-show="viewMode === 0" class="map-container q-mb-md">
+                    <div id="weather-map" ref="mapRef"></div>
+                </div>
+
+                <!-- Weather Table -->
+                <q-card v-show="viewMode" class="q-mb-md">
+                    <q-card-section>
+                        <div class="text-h6">Station Readings</div>
+                    </q-card-section>
+                    <q-card-section>
+                        <q-table :rows="tableData" :columns="columns" row-key="id" :pagination="{ rowsPerPage: 10 }"
+                            flat bordered>
+                            <template v-slot:body-cell-temperature="props">
+                                <q-td :props="props">
+                                    <q-chip :color="getTemperatureColor(props.value)" text-color="white" dense>
+                                        {{ props.value }}°C
+                                    </q-chip>
+                                </q-td>
+                            </template>
+                        </q-table>
+                    </q-card-section>
+                </q-card>
+            </div>
         </div>
-    </div>
+    </q-page>
 </template>
 
 <script setup>
@@ -68,11 +82,14 @@ const yesterday = new Date()
 yesterday.setDate(yesterday.getDate() - 1)
 const selectedDate = ref(yesterday.toISOString().split('T')[0].replace(/-/g, '/'))
 
-// Watch for date changes
-watch(selectedDate, async (newDate) => {
-    await fetchWeather(newDate)
-    initializeMap()
-})
+// Temperature color function
+const getTemperatureColor = (temp) => {
+    if (temp <= 0) return 'blue'
+    if (temp <= 10) return 'cyan'
+    if (temp <= 20) return 'green'
+    if (temp <= 30) return 'orange'
+    return 'red'
+}
 
 // Create custom icon for weather stations
 const weatherIcon = L.icon({
@@ -111,18 +128,19 @@ const initializeMap = () => {
         const { latitude, longitude } = station.location
         const marker = L.marker([latitude, longitude], { icon: weatherIcon })
             .bindPopup(`
-                <strong>${station.name}</strong><br>
-                Temperature: ${station.temperature}°C<br>
-                ID: ${station.id}
+                <div class="station-popup">
+                    <strong>${station.name}</strong><br>
+                    Temperature: <span style="color: ${getTemperatureColor(station.temperature)}">${station.temperature}°C</span><br>
+                    ID: ${station.id}
+                </div>
             `)
         marker.addTo(map)
-        console.log("marker", marker)
         bounds.extend([latitude, longitude])
     })
 
     map.fitBounds(bounds, {
-        padding: [50, 50], // Add padding around the bounds
-        maxZoom: 10 // Prevent zooming in too close
+        padding: [50, 50],
+        maxZoom: 10
     })
 
     // Force a map refresh
@@ -136,12 +154,11 @@ watch(stations, () => {
     }
 }, { deep: true })
 
-// watch(viewMode, () => {
-//     if (viewMode.value === 0) {
-//         initializeMap()
-//     }
-// })
-
+// Watch for date changes
+watch(selectedDate, async (newDate) => {
+    await fetchWeather(newDate)
+    initializeMap()
+})
 
 const columns = [
     {
@@ -187,7 +204,7 @@ const columns = [
 ]
 
 onMounted(async () => {
-    await fetchWeather()
+    await fetchWeather(selectedDate.value)
     tableData.value = stations.value
     if (viewMode.value === 0) {
         initializeMap()
@@ -196,21 +213,30 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.q-pa-md {
-    padding: 16px;
-}
-
 .map-container {
     position: relative;
-    height: 500px;
+    height: 600px;
     width: 100%;
-    margin: 20px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #weather-map {
     height: 100%;
     width: 100%;
+}
+
+.station-popup {
+    padding: 5px;
+    min-width: 150px;
+}
+
+:deep(.leaflet-popup-content-wrapper) {
     border-radius: 8px;
-    border: 1px solid #ddd;
+}
+
+:deep(.leaflet-popup-content) {
+    margin: 10px;
 }
 </style>
