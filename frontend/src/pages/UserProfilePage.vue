@@ -5,7 +5,7 @@
                 <q-card class="profile-card">
                     <q-card-section class="text-center">
                         <q-avatar size="100px" class="q-mb-md">
-                            <img :src="user.photo_url || 'https://cdn.quasar.dev/img/avatar.png'" />
+                            <img :src="user.photo_url || defaultAvatar" @error="handleImageError" />
                         </q-avatar>
                         <div class="text-h5">{{ user.full_name }}</div>
                         <div class="text-subtitle1">@{{ user.username }}</div>
@@ -56,6 +56,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
+import defaultAvatar from 'src/assets/default-avatar.png'
 
 const $q = useQuasar()
 const router = useRouter()
@@ -149,6 +150,11 @@ const cancelEdit = () => {
 const logout = () => {
     localStorage.removeItem('token')
     router.push('/login')
+}
+
+const handleImageError = (e) => {
+    console.log("handleImageError", e)
+    e.target.src = defaultAvatar
 }
 
 onMounted(() => {
