@@ -1,1 +1,2 @@
 - Binance api was at https://api.binance.com/api/v3/ticker/24hr not data
+https://data-api.binance.vision/api/v3 https://developers.binance.com/docs/binance-spot-api-docs/rest-api/general-api-information

@@ -12,6 +12,17 @@ export const useCoinStore = defineStore('coin', {
                 this.coins = response.data
                 console.log(this.coins)
             })
+        },
+
+
+        async fetchKlines(symbol, interval) {
+            try {
+                const response = await coinApi.get(`uiKlines?symbol=${symbol}&interval=${interval}`);
+                return response.data;
+            } catch (error) {
+                console.error('Error fetching klines:', error);
+                throw error; // Rethrow the error for further handling if needed
+            }
         }
-    }
+    },
 })

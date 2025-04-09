@@ -9,7 +9,7 @@ import axios from 'axios'
 // for each client)
 
 const api = axios.create({ baseURL: 'http://localhost:8000/api' })
-const coinApi = axios.create({ baseURL: 'https://api.binance.com/api/v3' })
+const coinApi = axios.create({ baseURL: 'https://data-api.binance.vision/api/v3' })
 export default defineBoot(({ app }) => {
   // for use inside Vue files (Composition API) through inject
   app.provide('axios', axios)

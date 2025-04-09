@@ -2,12 +2,13 @@
     <div>
         <h1>Coin Page</h1>
     </div>
+
     <div class="q-pa-md">
         <q-table title="Cryptocurrency Market" :rows="coins" :columns="columns" row-key="symbol"
             :pagination="{ rowsPerPage: 10 }" @row-click="onRowClick" />
 
-        <q-dialog v-model="showCoinDetails">
-            <q-card style="min-width: 350px">
+        <q-dialog v-model="showCoinDetails" maximized>
+            <q-card class="full-width">
                 <q-card-section class="row items-center q-pb-none">
                     <div class="text-h6">{{ selectedCoin?.symbol }}</div>
                     <q-space />
@@ -27,6 +28,11 @@
                                         class="q-ml-sm" />
                                 </q-chip>
                             </div>
+                        </div>
+
+                        <!-- Chart Section -->
+                        <div class="col-12 chart-container">
+                            <Line :options="chartOptions" :data="chartData" />
                         </div>
 
                         <!-- Price Stats -->
@@ -72,14 +78,14 @@
                                     <q-item-section>
                                         <q-item-label caption>Bid Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.bidPrice }} ({{ selectedCoin.bidQty
-                                            }})</q-item-label>
+                                        }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                                 <q-item>
                                     <q-item-section>
                                         <q-item-label caption>Ask Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.askPrice }} ({{ selectedCoin.askQty
-                                            }})</q-item-label>
+                                        }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -95,11 +101,57 @@
 import { ref, onMounted } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCoinStore } from 'src/stores/coin'
+import { Line } from 'vue-chartjs'
 
 const coinStore = useCoinStore()
 const { coins } = storeToRefs(coinStore)
+const { fetchKlines } = useCoinStore()
 const showCoinDetails = ref(false)
 const selectedCoin = ref(null)
+
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement } from 'chart.js'
+
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, PointElement, LineElement)
+
+const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            position: 'top',
+        },
+        title: {
+            display: true,
+            text: 'Price History'
+        }
+    },
+    scales: {
+        y: {
+            beginAtZero: false,
+            grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+            }
+        },
+        x: {
+            grid: {
+                display: false
+            }
+        }
+    }
+}
+const chartData = ref({
+    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+    datasets: [
+        {
+            label: 'Price History',
+            backgroundColor: '#f87979',
+            data: [65, 59, 80, 81, 56, 55, 40],
+            borderColor: '#f87979',
+            tension: 0.1
+        }
+    ]
+})
 
 const columns = [
     {
@@ -148,9 +200,34 @@ const columns = [
     }
 ]
 
+const klines = ref([])
+
 function onRowClick(evt, row) {
     selectedCoin.value = row
+    fetchKlines(row.symbol, '1m').then(data => {
+        klines.value = data
+        console.log('klines', klines.value)
+        updateChartData(klines.value)
+    })
     showCoinDetails.value = true
+}
+
+function updateChartData(klines) {
+    const labels = klines.map(kline => new Date(kline[0]).toLocaleTimeString())
+    const data = klines.map(kline => parseFloat(kline[4]))
+
+    chartData.value = {
+        labels: labels,
+        datasets: [
+            {
+                label: 'Price History',
+                backgroundColor: '#f87979',
+                data: data,
+                borderColor: '#f87979',
+                tension: 0.1
+            }
+        ]
+    }
 }
 
 function getPriceChangeColor(change) {
@@ -173,5 +250,17 @@ onMounted(async () => {
 
 .negative {
     background-color: #c10015 !important;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.full-width {
+    width: 90vw;
+    max-width: 1200px;
 }
 </style>
