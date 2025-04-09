@@ -1,6 +1,7 @@
 # Sherlock AI Assignment
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/f3b0f434-f04e-498d-848c-91d228c28fa9/deploy-status)](https://app.netlify.com/sites/sherlockai/deploys)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-sherlockai.lockhart.in-blue?style=flat&logo=globe)](https://sherlockai.lockhart.in/)
 
 A full-stack web application built as part of the Sherlock AI interview process. The project demonstrates modern web development practices with a focus on security and user experience.
 
