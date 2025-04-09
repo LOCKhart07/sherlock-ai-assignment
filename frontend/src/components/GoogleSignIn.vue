@@ -1,6 +1,4 @@
-<!-- Start of Selection -->
 <template>
-    <div>bruhhhhhhhhhhhhhhhh</div>
     <div class="google-sign-in">
         <div id="g_id_onload" :data-client_id="clientId" data-context="signin" data-ux_mode="popup"
             data-auto_prompt="false"></div>
@@ -69,4 +67,3 @@ async function handleCredentialResponse(response) {
     margin: 1rem 0;
 }
 </style>
-<!-- End of Selection -->
