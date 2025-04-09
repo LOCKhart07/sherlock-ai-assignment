@@ -13,7 +13,7 @@ USER sherlock
 
 # Copy and install dependencies
 COPY --chown=sherlock:sherlock ./requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt --user --no-warn-script-location # Install in user directory
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt --user --no-warn-script-location
 
 # Copy application code
 COPY --chown=sherlock:sherlock ./ /code/app
