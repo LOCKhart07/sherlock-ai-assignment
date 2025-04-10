@@ -52,7 +52,7 @@ async function handleCredentialResponse(response) {
         await new Promise(resolve => setTimeout(resolve, 500));
         const result = await authStore.googleSignIn(response.credential)
         if (result) {
-            router.push('/profile')
+            router.push('/')
         }
     } catch (error) {
         console.error('Google sign-in error:', error)

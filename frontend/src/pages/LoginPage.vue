@@ -50,7 +50,7 @@ const loading = ref(false)
 
 onMounted(() => {
     if (authStore.isAuthenticated) {
-        router.push('/profile')
+        router.push('/')
     }
 })
 
@@ -64,7 +64,7 @@ const onSubmit = async () => {
                 color: 'positive',
                 message: 'Login successful!',
             })
-            router.push('/profile')
+            router.push('/')
         } else {
             throw new Error('Login failed')
         }

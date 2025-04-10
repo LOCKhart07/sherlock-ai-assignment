@@ -22,13 +22,6 @@
           </q-item-section>
           <q-item-section>Home</q-item-section>
         </q-item>
-        <q-item clickable v-ripple to="/profile" exact active-class="q-item--active">
-          <q-item-section avatar>
-            <q-icon name="person" />
-          </q-item-section>
-          <q-item-section>Profile</q-item-section>
-        </q-item>
-
 
         <q-item clickable v-ripple to="/coin" exact active-class="q-item--active">
           <q-item-section avatar>
@@ -44,8 +37,12 @@
           <q-item-section>Weather Stations</q-item-section>
         </q-item>
 
-
-
+        <q-item clickable v-ripple to="/profile" exact active-class="q-item--active">
+          <q-item-section avatar>
+            <q-icon name="person" />
+          </q-item-section>
+          <q-item-section>Profile</q-item-section>
+        </q-item>
 
         <q-separator />
 
