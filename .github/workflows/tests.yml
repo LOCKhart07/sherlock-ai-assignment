@@ -38,8 +38,7 @@ jobs:
         run: |
           pwd
           ls -la
-          pytest tests/ -v --capture=tee-sys
-
+          pytest tests/ -v
   frontend-tests:
     runs-on: ubuntu-latest
     defaults:
