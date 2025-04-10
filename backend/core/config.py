@@ -11,7 +11,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Database Configuration
 SQLALCHEMY_DATABASE_URL = os.getenv(
-    "SQLALCHEMY_DATABASE_URL", "sqlite:////./data/auth.db"
+    "SQLALCHEMY_DATABASE_URL", "sqlite:///./data/auth.db"
 )
 
 # Google OAuth2 Configuration
