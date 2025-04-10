@@ -38,7 +38,7 @@ jobs:
         run: |
           pwd
           ls -la
-          pytest tests/ -v
+          pytest tests/ -vv
 
   frontend-tests:
     runs-on: ubuntu-latest
