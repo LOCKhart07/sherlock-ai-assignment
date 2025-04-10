@@ -102,6 +102,7 @@ A full-stack web application built as part of the Sherlock AI interview process.
 - Enhancement of the user interface.
 - Date selector for the weather page (A date selector was implemented on the weather page but removed due to slow API response times when a date is specified).
 - Time interval selector for the coin price chart.
+- Facebook sign in
 - Public APIs should be proxied through the backend instead of being called directly, potentially with Redis caching.
 - Additional testing and improved error handling are required.
 
