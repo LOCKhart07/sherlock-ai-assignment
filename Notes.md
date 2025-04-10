@@ -1,5 +1,6 @@
 - General notes: 
     - The Binance API endpoint is https://data-api.binance.vision/api/v3/ticker/24hr, not https://data.binance.com/api/v3/ticker/24hr as specified in the assignment document.
+    - The symbols provided here are not standardized. Prices are quoted against various cryptocurrencies instead of a common standard like USD. Currently, the symbols will remain as they are. Please reach out if a different handling approach is required.
 
 - Enhancements:
     - Refresh token implementation is pending.
