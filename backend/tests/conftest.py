@@ -20,9 +20,12 @@ import random
 @pytest.fixture(scope="session")
 def test_engine():
     """Create a test database engine."""
+    # Ensure data directory exists
+    os.makedirs("./data", exist_ok=True)
+
     random_db_name = f"test_db_{random.randint(1000, 9999)}.db"
-    TEST_SQLALCHEMY_DATABASE_URL = f"sqlite:///./{random_db_name}"
-    TEST_DB_PATH = f"./{random_db_name}"
+    TEST_SQLALCHEMY_DATABASE_URL = f"sqlite:///./data/{random_db_name}"
+    TEST_DB_PATH = f"./data/{random_db_name}"
 
     engine = create_engine(
         TEST_SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
