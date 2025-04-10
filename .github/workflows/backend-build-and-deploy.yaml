@@ -83,5 +83,5 @@ jobs:
             sudo mkdir -p /tmp/${{ github.repository }}
             sudo curl -L https://raw.githubusercontent.com/${{ github.repository }}/main/backend/docker-compose.yaml -o /tmp/${{ github.repository }}/docker-compose.yaml
             cd /tmp/${{ github.repository }}
-            sudo SECRET_KEY=${{ secrets.SECRET_KEY}} GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID}} GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET}} docker compose up -d
+            sudo SECRET_KEY=${{ secrets.SECRET_KEY}} GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID}} GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET}} SQLALCHEMY_DATABASE_URL=${{ secrets.SQLALCHEMY_DATABASE_URL}} docker compose up -d
             sudo rm -rf /tmp/${{ github.repository }}
