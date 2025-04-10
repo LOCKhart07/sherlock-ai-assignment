@@ -65,14 +65,17 @@ const editForm = ref({})
 const isPwd = ref(true)
 const loading = ref(false)
 const { getUserProfile, updateUserProfile } = useAuthStore()
+const authStore = useAuthStore()
 
 const fetchUserProfileLocal = async () => {
     try {
         const token = localStorage.getItem('token')
         if (!token) {
+            authStore.logout()
             router.push('/login')
             return
         }
+
 
         const response = await getUserProfile()
         user.value = response
@@ -92,6 +95,7 @@ const fetchUserProfileLocal = async () => {
             color: 'negative',
             message: error.message || 'Failed to fetch user profile',
         })
+        authStore.logout()
         console.log("error", error)
         router.push('/login')
     }
