@@ -21,7 +21,13 @@ from core.security import (
 Base.metadata.create_all(bind=engine)
 
 # FastAPI app
-app = FastAPI(max_request_body_size=10 * 1024 * 1024)  # 10MB
+app = FastAPI(
+    title="SherlockAI Assignment",
+    max_request_body_size=10 * 1024 * 1024,  # 10MB
+    docs_url="/sherlock-ai/api/docs",
+    redoc_url="/sherlock-ai/api/redoc",
+    openapi_url="/sherlock-ai/api/openapi.json",
+)
 
 # CORS middleware
 app.add_middleware(

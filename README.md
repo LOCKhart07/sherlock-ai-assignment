@@ -76,6 +76,11 @@ A full-stack web application built as part of the Sherlock AI interview process.
    uvicorn app:app --reload
    ```
 
+   Once the backend is running, you can access the API documentation at:
+   - Swagger UI: http://localhost:3000/sherlock-ai/api/docs
+   - ReDoc: http://localhost:3000/sherlock-ai/api/redoc
+   - OpenAPI Schema: http://localhost:3000/sherlock-ai/api/openapi.json
+
 3. Frontend setup:
    ```bash
    cd frontend
