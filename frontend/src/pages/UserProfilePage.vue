@@ -13,7 +13,44 @@
 
                     <q-card-section>
                         <q-form @submit="onSubmit" class="q-gutter-md">
-                            <q-input v-model="editForm.photo_url" label="Photo URL" outlined />
+                            <div class="row items-center q-mb-md">
+                                <div style="max-width: 500px;">
+                                    <q-btn-toggle v-model="photoInputType" size="md" toggle-color="primary" :options="[
+                                        { value: 'file', slot: 'file' },
+                                        { value: 'url', slot: 'url' }
+                                    ]" class="q-mr-md" style="flex: 1;">
+                                        <template v-slot:file>
+                                            <div class="row items-center no-wrap">
+                                                <div class="text-center">
+                                                    File
+                                                </div>
+                                                <q-icon right name="upload" size="18px" />
+                                            </div>
+                                        </template>
+
+                                        <template v-slot:url>
+                                            <div class="row items-center no-wrap">
+                                                <div class="text-center">
+                                                    URL
+                                                </div>
+                                                <q-icon right name="link" size="18px" />
+                                            </div>
+                                        </template>
+                                    </q-btn-toggle>
+                                </div>
+
+                                <div style="flex: 2;">
+                                    <q-input v-if="photoInputType === 'url'" v-model="editForm.photo_url"
+                                        label="Photo URL" outlined dense style="width: 100%;" />
+                                    <q-file v-else v-model="photoFile" label="Upload Photo" outlined dense
+                                        accept=".jpg,.jpeg,.png" @update:model-value="handleFileUpload"
+                                        style="width: 100%;">
+                                        <template v-slot:prepend>
+                                            <q-icon name="attach_file" size="18px" />
+                                        </template>
+                                    </q-file>
+                                </div>
+                            </div>
 
                             <q-input v-model="editForm.full_name" label="Full Name"
                                 :rules="[val => !!val || 'Full name is required']" outlined />
@@ -64,6 +101,8 @@ const user = ref({})
 const editForm = ref({})
 const isPwd = ref(true)
 const loading = ref(false)
+const photoFile = ref(null)
+const photoInputType = ref('url')
 const { getUserProfile, updateUserProfile } = useAuthStore()
 const authStore = useAuthStore()
 
@@ -159,6 +198,28 @@ const logout = () => {
 const handleImageError = (e) => {
     console.log("handleImageError", e)
     e.target.src = defaultAvatar
+}
+
+const handleFileUpload = async (file) => {
+    if (!file) return
+
+    try {
+        const formData = new FormData()
+        formData.append('photo', file)
+
+        // Here you would typically upload the file to your server
+        // and get back a URL. For now, we'll create a local URL
+        const reader = new FileReader()
+        reader.onload = (e) => {
+            editForm.value.photo_url = e.target.result
+        }
+        reader.readAsDataURL(file)
+    } catch (error) {
+        $q.notify({
+            color: 'negative',
+            message: 'Failed to process image file' + error,
+        })
+    }
 }
 
 onMounted(() => {
