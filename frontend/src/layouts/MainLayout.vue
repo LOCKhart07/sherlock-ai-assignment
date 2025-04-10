@@ -8,6 +8,7 @@
           SherlockAI Assignment - Jenslee Dsouza
         </q-toolbar-title>
 
+        <q-btn flat dense round icon="code" aria-label="GitHub" @click="openGitHubRepo" />
 
       </q-toolbar>
     </q-header>
@@ -85,6 +86,10 @@ function logout() {
     message: 'Logged out successfully'
   })
   router.push('/login')
+}
+
+function openGitHubRepo() {
+  window.open('https://github.com/LOCKhart07/sherlock-ai-assignment', '_blank')
 }
 </script>
 
