@@ -191,7 +191,8 @@ const cancelEdit = () => {
 }
 
 const logout = () => {
-    localStorage.removeItem('token')
+    // localStorage.removeItem('token')
+    authStore.logout()
     router.push('/login')
 }
 
