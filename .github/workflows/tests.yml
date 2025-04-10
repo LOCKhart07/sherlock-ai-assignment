@@ -30,6 +30,8 @@ jobs:
         run: |
           mkdir -p ./data
           chmod 777 ./data
+          pwd
+          ls -la
 
       - name: Run tests
         run: |
