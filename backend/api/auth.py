@@ -109,11 +109,9 @@ async def update_user_profile(
 ):
     # Update user fields if provided
     for field, value in user_update.model_dump(exclude_unset=True).items():
-        print("field", field, "value", value)
         if field == "password" and value:
-            value = get_password_hash(value)
             field = "hashed_password"
-            print("field", field, "value", value)
+            value = get_password_hash(value)
         setattr(current_user, field, value)
 
     db.commit()
