@@ -8,3 +8,4 @@
     - A date selector was implemented on the weather page but removed due to slow API response times when a date is specified.
     - Public APIs should be proxied through the backend, potentially with Redis caching.
     - Additional testing and improved error handling are required.
+    - There are occasional issues with the Google token exchange, particularly related to time synchronization. This occurs infrequently.
