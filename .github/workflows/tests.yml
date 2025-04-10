@@ -20,21 +20,24 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      
+      - name: Setup database directory
+        run: |
+          pwd
+          ls -la
+          mkdir -p data
+          chmod 777 data
+          ls -la data
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Setup database directory
-        run: |
-          mkdir -p ./data
-          chmod 777 ./data
-          pwd
-          ls -la
-
       - name: Run tests
         run: |
+          pwd
+          ls -la
           pytest tests/ -v
 
   frontend-tests:
