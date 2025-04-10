@@ -207,8 +207,6 @@ const handleFileUpload = async (file) => {
         const formData = new FormData()
         formData.append('photo', file)
 
-        // Here you would typically upload the file to your server
-        // and get back a URL. For now, we'll create a local URL
         const reader = new FileReader()
         reader.onload = (e) => {
             editForm.value.photo_url = e.target.result
