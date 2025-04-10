@@ -79,14 +79,14 @@
                                     <q-item-section>
                                         <q-item-label caption>Bid Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.bidPrice }} ({{ selectedCoin.bidQty
-                                        }})</q-item-label>
+                                            }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                                 <q-item>
                                     <q-item-section>
                                         <q-item-label caption>Ask Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.askPrice }} ({{ selectedCoin.askQty
-                                        }})</q-item-label>
+                                            }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -239,7 +239,20 @@ function getPriceChangeIcon(change) {
     return parseFloat(change) >= 0 ? 'arrow_upward' : 'arrow_downward'
 }
 
+
+import { useAuthStore } from 'src/stores/auth'
+const authStore = useAuthStore()
+
 onMounted(async () => {
+    if (!authStore.isAuthenticated) {
+        authStore.logout()
+        $q.notify({
+            color: 'negative',
+            message: 'Please login to continue.',
+        })
+        router.push('/login')
+        return
+    }
     await coinStore.fetchCoins()
 })
 </script>

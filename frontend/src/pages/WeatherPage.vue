@@ -190,7 +190,22 @@ const columns = [
     }
 ]
 
+
+import { useAuthStore } from 'src/stores/auth'
+const authStore = useAuthStore()
+
+
+
 onMounted(async () => {
+    if (!authStore.isAuthenticated) {
+        authStore.logout()
+        $q.notify({
+            color: 'negative',
+            message: 'Please login to continue.',
+        })
+        router.push('/login')
+        return
+    }
     await fetchWeather(null)
     tableData.value = stations.value
     if (viewMode.value === 0) {
