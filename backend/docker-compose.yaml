@@ -13,6 +13,8 @@ services:
         timeout: 10s
         retries: 5
         start_period: 30s
+      volumes:
+        - /mnt/sherlock-ai:/mnt
       environment:
         SECRET_KEY: ${SECRET_KEY}
         GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
