@@ -21,7 +21,7 @@ from core.security import (
 Base.metadata.create_all(bind=engine)
 
 # FastAPI app
-app = FastAPI()
+app = FastAPI(max_request_body_size=10 * 1024 * 1024)  # 10MB
 
 # CORS middleware
 app.add_middleware(
