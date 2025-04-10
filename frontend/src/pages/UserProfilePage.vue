@@ -93,7 +93,7 @@ const fetchUserProfileLocal = async () => {
     } catch (error) {
         $q.notify({
             color: 'negative',
-            message: error.message || 'Failed to fetch user profile',
+            message: 'User logged out due to expired token. Please login again.',
         })
         authStore.logout()
         console.log("error", error)
