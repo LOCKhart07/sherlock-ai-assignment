@@ -79,14 +79,14 @@
                                     <q-item-section>
                                         <q-item-label caption>Bid Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.bidPrice }} ({{ selectedCoin.bidQty
-                                            }})</q-item-label>
+                                        }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                                 <q-item>
                                     <q-item-section>
                                         <q-item-label caption>Ask Price</q-item-label>
                                         <q-item-label>{{ selectedCoin.askPrice }} ({{ selectedCoin.askQty
-                                            }})</q-item-label>
+                                        }})</q-item-label>
                                     </q-item-section>
                                 </q-item>
                             </q-list>
@@ -99,7 +99,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useCoinStore } from 'src/stores/coin'
 import { Line } from 'vue-chartjs'
@@ -243,8 +243,28 @@ function getPriceChangeIcon(change) {
 import { useAuthStore } from 'src/stores/auth'
 const authStore = useAuthStore()
 
-onMounted(async () => {
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
+
+import { useRouter } from 'vue-router'
+const router = useRouter()
+
+onBeforeMount(async () => {
     if (!authStore.isAuthenticated) {
+        authStore.logout()
+        $q.notify({
+            color: 'negative',
+            message: 'Please login to continue.',
+        })
+        router.push('/login')
+        return
+    }
+})
+
+onMounted(async () => {
+    console.log("coin page mounted")
+    if (!authStore.isAuthenticated) {
+        console.log("coin page not authenticated")
         authStore.logout()
         $q.notify({
             color: 'negative',

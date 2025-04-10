@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch, onBeforeMount } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useWeatherStore } from 'src/stores/weather'
 import L from 'leaflet'
@@ -194,9 +194,13 @@ const columns = [
 import { useAuthStore } from 'src/stores/auth'
 const authStore = useAuthStore()
 
+import { useQuasar } from 'quasar'
+const $q = useQuasar()
 
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
-onMounted(async () => {
+onBeforeMount(async () => {
     if (!authStore.isAuthenticated) {
         authStore.logout()
         $q.notify({
@@ -206,12 +210,17 @@ onMounted(async () => {
         router.push('/login')
         return
     }
+})
+
+
+onMounted(async () => {
     await fetchWeather(null)
     tableData.value = stations.value
     if (viewMode.value === 0) {
         initializeMap()
     }
 })
+
 </script>
 
 <style scoped>
