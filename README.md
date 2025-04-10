@@ -84,3 +84,26 @@ A full-stack web application built as part of the Sherlock AI interview process.
 │   └── tests/        # Test suite
 └── .github/          # GitHub Actions workflows
 ```
+
+## For Assessor/Interviewer
+### Extra Features Added (Not Specified in Assignment Document):
+- Map for viewing weather data.
+- CI/CD setup 
+   - Backend: GitHub Actions + OCI VM + Docker + Nginx
+   - Frontend: Netlify
+   - Custom personal domain(lockhart.in)
+
+### Clarifications:
+- The correct Binance API endpoint is [https://data-api.binance.vision/api/v3/ticker/24hr](https://data-api.binance.vision/api/v3/ticker/24hr), not [https://data.binance.com/api/v3/ticker/24hr](https://data.binance.com/api/v3/ticker/24hr) as specified in the assignment document.
+- The symbols provided are not standardized; prices are quoted against various cryptocurrencies instead of a common standard like USD. Currently, the symbols will remain as they are. Please reach out if a different handling approach is required.
+
+### Future Scope:
+- Implementation of refresh tokens.
+- Enhancement of the user interface.
+- Date selector for the weather page (A date selector was implemented on the weather page but removed due to slow API response times when a date is specified).
+- Time interval selector for the coin price chart.
+- Public APIs should be proxied through the backend instead of being called directly, potentially with Redis caching.
+- Additional testing and improved error handling are required.
+
+### Known Bugs:
+- Occasional issues with the Google token exchange, particularly related to time synchronization. This occurs infrequently.
