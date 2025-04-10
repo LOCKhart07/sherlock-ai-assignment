@@ -6,7 +6,7 @@
 
     <div class="q-pa-md">
         <q-table title="Cryptocurrency Market" :rows="coins" :columns="columns" row-key="symbol"
-            :pagination="{ rowsPerPage: 10 }" @row-click="onRowClick" />
+            :pagination="{ rowsPerPage: 10 }" @row-click="onRowClick" :loading="coins.length === 0" />
 
         <q-dialog v-model="showCoinDetails" maximized>
             <q-card class="full-width">
